@@ -1,0 +1,38 @@
+import {
+  AfterInsert,
+  AfterRemove,
+  AfterUpdate,
+  Column,
+  Entity,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Movie } from '../movies/movie.entity';
+
+@Entity()
+export class Actor {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  name: string;
+
+  @Column()
+  dateOfBirth: Date;
+
+  @ManyToMany(() => Movie, (movie) => movie.actors)
+  movies: Movie[];
+
+  @AfterInsert()
+  logInsert() {
+    console.log(`Inserted Actor with id: ${this.id}`);
+  }
+  @AfterUpdate()
+  logUpdate() {
+    console.log(`Updated Actor with id: ${this.id}`);
+  }
+  @AfterRemove()
+  logRemove() {
+    console.log(`Removed Actor with id: ${this.id}`);
+  }
+}
