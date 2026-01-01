@@ -1,3 +1,4 @@
+import { Genre } from 'src/genres/genre.entity';
 import {
   AfterInsert,
   AfterRemove,
@@ -6,9 +7,11 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Actor } from '../actors/actor.entity';
+import { Review } from '../reviews/review.entity';
 
 @Entity()
 export class Movie {
@@ -21,7 +24,7 @@ export class Movie {
   @Column({ type: 'text' })
   description: string;
 
-  @Column()
+  @Column({ type: 'date' })
   releaseDate: Date;
 
   @Column()
@@ -34,6 +37,12 @@ export class Movie {
   @JoinTable()
   actors: Actor[];
 
+  @ManyToMany(() => Genre, genre => genre.movies)
+  @JoinTable()
+  genres: Genre[];
+
+  @OneToMany(() => Review, review => review.movie)
+  reviews: Review[];
   @AfterInsert()
   logInsert() {
     console.log(`Inserted Movie with id: ${this.id}`);

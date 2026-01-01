@@ -1,9 +1,11 @@
+import { Movie } from 'src/movies/movie.entity';
 import {
   AfterInsert,
   AfterRemove,
   AfterUpdate,
   Column,
   Entity,
+  ManyToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -11,8 +13,15 @@ import {
 export class Genre {
   @PrimaryGeneratedColumn()
   id: number;
+
   @Column()
-  genre: string;
+  name: string;
+
+  @Column({ type: 'text' })
+  description: string;
+
+  @ManyToMany(() => Movie, movie => movie.genres)
+  movies: Movie[];
 
   @AfterInsert()
   logInsert() {

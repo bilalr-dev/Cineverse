@@ -17,10 +17,10 @@ export class Actor {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ type: 'date' })
   dateOfBirth: Date;
 
-  @ManyToMany(() => Movie, (movie) => movie.actors)
+  @ManyToMany(() => Movie, movie => movie.actors)
   movies: Movie[];
 
   @AfterInsert()

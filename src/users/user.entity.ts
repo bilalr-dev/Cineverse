@@ -1,9 +1,11 @@
+import { Review } from 'src/reviews/review.entity';
 import {
   AfterInsert,
   AfterRemove,
   AfterUpdate,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -11,10 +13,16 @@ import {
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
-  @Column()
+  @Column({ unique: true })
   email: string;
   @Column()
   password: string;
+
+  @Column({ default: 'user' })
+  role: string;
+
+  @OneToMany(() => Review, review => review.user)
+  reviews: Review[];
 
   @AfterInsert()
   logInsert() {
