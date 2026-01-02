@@ -3,14 +3,9 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
-const cookieSession = require('cookie-session');
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.use(
-    cookieSession({
-      keys: ['asdfsfc'],
-    }),
-  );
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -22,10 +17,16 @@ async function bootstrap() {
     .setTitle('Cineverse API')
     .setDescription('Cineverse API description')
     .setVersion('1.0')
-    .addTag('Cineverse')
+    .addTag('auth')
+    .addTag('users')
+    .addTag('movies')
+    .addTag('actors')
+    .addTag('genres')
+    .addTag('reviews')
+    .addBearerAuth()  // Add JWT Bearer token support for Swagger
     .build();
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, documentFactory);
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
 
   await app.listen(process.env.PORT ?? 3000);
 }

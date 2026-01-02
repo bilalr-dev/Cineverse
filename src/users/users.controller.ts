@@ -5,21 +5,22 @@ import {
   NotFoundException,
   Param,
   Query,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
+import { User } from './user.entity';
 import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  // @Get('/whoami')
-  // whoAmI(@Session() session: any) {
-  //   return this.usersService.findOne(session.userId);
-  // }
   @Get('/whoami')
-  whoAmI(@CurrentUser() user: string) {
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
+  whoAmI(@CurrentUser() user: User) {
     return user;
   }
 

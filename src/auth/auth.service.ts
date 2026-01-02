@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { scrypt as _scrypt, randomBytes } from 'crypto';
 import { promisify } from 'util';
 import { UsersService } from '../users/users.service';
@@ -11,7 +12,10 @@ const scrypt = promisify(_scrypt);
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private usersService: UsersService,
+    private jwtService: JwtService,
+  ) {}
 
   async signup(email: string, password: string) {
     //See if email is used before
@@ -27,8 +31,15 @@ export class AuthService {
     const result = salt + '.' + hash.toString('hex');
     //Create a new user and save it
     const user = await this.usersService.create(email, result);
-    //return the user
-    return user;
+
+    //Generate JWT token
+    const payload = { sub: user.id, email: user.email };
+    const token = this.jwtService.sign(payload);
+    //return the user and token
+    return {
+      user,
+      access_token: token,
+    };
   }
 
   async signin(email: string, password: string) {
@@ -40,6 +51,14 @@ export class AuthService {
     if (storedHash !== hash.toString('hex'))
       throw new BadRequestException('Incorrect credentials');
 
-    return user;
+    //Generate JWT token
+    const payload = { sub: user.id, email: user.email };
+    const token = this.jwtService.sign(payload);
+
+    //return user and token
+    return {
+      user,
+      access_token: token,
+    };
   }
 }
