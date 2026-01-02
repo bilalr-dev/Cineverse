@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import { IsArray, IsDateString, IsInt, IsString, IsUrl } from 'class-validator';
 
 export class CreateMovieDto {
@@ -8,19 +9,21 @@ export class CreateMovieDto {
   description: string;
 
   @IsDateString()
-  releaseDate: Date;
+  releaseDate: string;
 
-  @IsString()
+  @IsUrl()
   poster: string;
 
   @IsUrl()
   trailerLink: string;
 
   @IsArray()
+  @Type(() => Number)
   @IsInt({ each: true })
   actorIds: number[];
 
   @IsArray()
+  @Type(() => Number)
   @IsInt({ each: true })
   genreIds: number[];
 }
