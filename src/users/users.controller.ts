@@ -7,11 +7,26 @@ import {
   Query,
   UseInterceptors,
 } from '@nestjs/common';
+import { CurrentUser } from './decorators/current-user.decorator';
 import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
+
+  // @Get('/whoami')
+  // whoAmI(@Session() session: any) {
+  //   return this.usersService.findOne(session.userId);
+  // }
+  @Get('/whoami')
+  whoAmI(@CurrentUser() user: string) {
+    return user;
+  }
+
+  @Get()
+  findAllUsers(@Query('email') email: string) {
+    return this.usersService.find(email);
+  }
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('/:id')
@@ -21,11 +36,4 @@ export class UsersController {
 
     return user;
   }
-
-  @Get()
-  findAllUsers(@Query('email') email: string) {
-    return this.usersService.find(email);
-  }
 }
-
-
